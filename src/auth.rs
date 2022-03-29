@@ -153,7 +153,7 @@ pub async fn check_token(token: TokenCookie, config: &Config) -> Result<bool, Er
     match config.auth_provider() {
         Some(AuthProvider::Google) => check_token_google(token).await,
         Some(AuthProvider::Microsoft) => check_token_microsoft(token).await,
-        None => Err(Error::Forbidden("No auth provider configured".to_owned())),
+        None => Ok(true), // No auth provider configured
     }
 }
 
