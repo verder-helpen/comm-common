@@ -24,9 +24,7 @@ pub mod credentials;
 extern crate lazy_static;
 
 pub mod prelude {
-    pub use crate::auth::{
-        check_token, render_login, render_unauthorized, AuthProvider, LoginUrl, TokenCookie,
-    };
+    pub use crate::auth::{render_login, render_unauthorized, AuthProvider, LoginUrl, TokenCookie};
     pub use crate::config::Config;
     pub use crate::error::Error;
     pub use crate::jwt::sign_auth_select_params;

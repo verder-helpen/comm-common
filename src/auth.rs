@@ -49,6 +49,13 @@ impl AuthProvider {
             }),
         }
     }
+
+    pub async fn check_token(&self, token: TokenCookie) -> Result<bool, Error> {
+        match self {
+            AuthProvider::Google => check_token_google(token).await,
+            AuthProvider::Microsoft => check_token_microsoft(token).await,
+        }
+    }
 }
 
 impl TryFrom<String> for AuthProvider {
@@ -149,38 +156,40 @@ async fn check_token_microsoft(token: TokenCookie) -> Result<bool, Error> {
     Ok(!user_info.display_name.is_empty())
 }
 
-pub async fn check_token(token: TokenCookie, config: &Config) -> Result<bool, Error> {
-    match config.auth_provider() {
-        Some(AuthProvider::Google) => check_token_google(token).await,
-        Some(AuthProvider::Microsoft) => check_token_microsoft(token).await,
-        None => Ok(true), // No auth provider configured
-    }
-}
-
 async fn redirect_generic<T>(
     config: &State<Config>,
     cookies: &CookieJar<'_>,
     token: TokenResponse<T>,
     translations: Translations,
 ) -> Result<String, Error> {
-    if check_token(TokenCookie(token.access_token().to_owned()), config).await? {
-        cookies.add_private(
-            Cookie::build("token", token.access_token().to_owned())
-                .http_only(true)
-                .secure(true)
-                .same_site(SameSite::None)
-                .finish(),
-        );
+    if let Some(auth_provider) = config.auth_provider() {
+        if auth_provider
+            .check_token(TokenCookie(token.access_token().to_owned()))
+            .await?
+        {
+            cookies.add_private(
+                Cookie::build("token", token.access_token().to_owned())
+                    .http_only(true)
+                    .secure(true)
+                    .same_site(SameSite::None)
+                    .finish(),
+            );
 
-        return Ok(translations.get(
-            "login_successful",
-            "You are now logged in. You can close this window",
-        ));
+            return Ok(translations.get(
+                "login_successful",
+                "You are now logged in. You can close this window",
+            ));
+        }
+
+        return Err(Error::Forbidden(translations.get(
+            "insufficient_permissions",
+            "Insufficient permissions, try logging in with another account",
+        )));
     }
 
-    Err(Error::Forbidden(translations.get(
-        "insufficient_permissions",
-        "Insufficient permissions, try logging in with another account",
+    Err(Error::InternalServer(translations.get(
+        "no_authentication_provider",
+        "No authentication provider configured.",
     )))
 }
 
