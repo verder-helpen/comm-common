@@ -1,3 +1,4 @@
+use core::convert::Infallible;
 use std::{convert::TryFrom, str::FromStr};
 
 use crate::error::Error;
@@ -7,8 +8,8 @@ use crate::{config::Config, translations::Translations};
 use reqwest::header::AUTHORIZATION;
 use rocket::{
     fairing::{AdHoc, Fairing},
-    http::{Cookie, CookieJar, SameSite},
-    outcome::IntoOutcome,
+    http::{Cookie, CookieJar, SameSite, Status},
+    outcome::Outcome,
     request::{self, FromRequest, Request},
     response::Redirect,
     State,
@@ -68,17 +69,48 @@ impl TryFrom<String> for AuthProvider {
 
 pub struct TokenCookie(String);
 
+impl FromStr for TokenCookie {
+    type Err = Infallible;
+
+    fn from_str(s: &str) -> Result<Self, <Self as FromStr>::Err> {
+        Ok(Self(s.to_owned()))
+    }
+}
+
+pub struct Authorized;
+
 #[rocket::async_trait]
-impl<'r> FromRequest<'r> for TokenCookie {
+impl<'r> FromRequest<'r> for Authorized {
     type Error = Error;
 
-    async fn from_request(request: &'r Request<'_>) -> request::Outcome<TokenCookie, Error> {
-        request
-            .cookies()
-            .get_private("token")
-            .and_then(|c| c.value().parse().ok())
-            .map(TokenCookie)
-            .or_forward(())
+    async fn from_request(request: &'r Request<'_>) -> request::Outcome<Authorized, Error> {
+        let config = request.rocket().state::<Config>().unwrap(); // if we don't have a config, panic
+
+        match config.auth_provider() {
+            Some(auth_provider) => match request.cookies().get_private("token") {
+                Some(token) => {
+                    let authorised = auth_provider
+                        .check_token(token.value().parse().unwrap())
+                        .await;
+                    match authorised {
+                        Ok(true) => Outcome::Success(Authorized),
+                        Ok(false) => Outcome::Failure((
+                            Status::Forbidden,
+                            Error::Forbidden("Token cookie not valid".to_owned()),
+                        )),
+                        Err(_) => Outcome::Failure((
+                            Status::InternalServerError,
+                            Error::Forbidden("Error validating token cookie".to_owned()),
+                        )),
+                    }
+                }
+                None => Outcome::Failure((
+                    Status::Unauthorized,
+                    Error::Unauthorized("Token cookie not found".to_owned()),
+                )),
+            },
+            None => Outcome::Success(Authorized),
+        }
     }
 }
 
