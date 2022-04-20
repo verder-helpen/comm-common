@@ -77,7 +77,13 @@ impl FromStr for TokenCookie {
     }
 }
 
-pub struct Authorized;
+pub struct Authorized(bool);
+
+impl From<Authorized> for bool {
+    fn from(authorized: Authorized) -> Self {
+        authorized.0
+    }
+}
 
 #[rocket::async_trait]
 impl<'r> FromRequest<'r> for Authorized {
@@ -93,23 +99,17 @@ impl<'r> FromRequest<'r> for Authorized {
                         .check_token(token.value().parse().unwrap())
                         .await;
                     match authorised {
-                        Ok(true) => Outcome::Success(Authorized),
-                        Ok(false) => Outcome::Failure((
-                            Status::Forbidden,
-                            Error::Forbidden("Token cookie not valid".to_owned()),
-                        )),
+                        Ok(true) => Outcome::Success(Authorized(true)),
+                        Ok(false) => Outcome::Success(Authorized(false)), // token cookie not valid
                         Err(_) => Outcome::Failure((
                             Status::InternalServerError,
                             Error::Forbidden("Error validating token cookie".to_owned()),
                         )),
                     }
                 }
-                None => Outcome::Failure((
-                    Status::Unauthorized,
-                    Error::Unauthorized("Token cookie not found".to_owned()),
-                )),
+                None => Outcome::Success(Authorized(false)), // no token cookie present
             },
-            None => Outcome::Success(Authorized),
+            None => Outcome::Success(Authorized(true)),
         }
     }
 }
