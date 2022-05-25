@@ -1,10 +1,10 @@
 use crate::auth;
 use crate::error::Error;
 
-use id_contact_jwt::{EncryptionKeyConfig, SignKeyConfig};
 use josekit::{jwe::JweDecrypter, jws::JwsVerifier};
 use serde::Deserialize;
 use std::{collections::HashMap, convert::TryFrom};
+use verder_helpen_jwt::{EncryptionKeyConfig, SignKeyConfig};
 
 #[cfg(feature = "auth_during_comm")]
 pub(crate) use self::auth_during_comm::{AuthDuringCommConfig, RawAuthDuringCommConfig};
@@ -25,9 +25,9 @@ pub struct RawConfig {
     /// Translations indexed by locale
     translations: LanguageTranslations,
 
-    /// Private key used to decrypt ID Contact JWEs
+    /// Private key used to decrypt Verder Helpen JWEs
     decryption_privkey: EncryptionKeyConfig,
-    /// Public key used to verify ID Contact JWSs
+    /// Public key used to verify Verder Helpen JWSs
     signature_pubkey: SignKeyConfig,
 
     auth_provider: Option<String>,
@@ -38,7 +38,7 @@ pub struct RawConfig {
     auth_during_comm_config: RawAuthDuringCommConfig,
 }
 
-/// configuration container for a typical id-contact communication plugin
+/// configuration container for a typical verder-helpen communication plugin
 #[derive(Debug, Deserialize)]
 #[serde(try_from = "RawConfig")]
 pub struct Config {
@@ -126,9 +126,9 @@ impl Config {
 
 #[cfg(feature = "auth_during_comm")]
 mod auth_during_comm {
-    use id_contact_jwt::SignKeyConfig;
     use serde::Deserialize;
     use std::{convert::TryFrom, fmt::Debug};
+    use verder_helpen_jwt::SignKeyConfig;
 
     use josekit::jws::{alg::hmac::HmacJwsAlgorithm, JwsSigner, JwsVerifier};
 
@@ -153,7 +153,7 @@ mod auth_during_comm {
     #[derive(Deserialize, Debug)]
     /// Configuration specific for auth during comm
     pub struct RawAuthDuringCommConfig {
-        /// URL to reach the ID Contact core directly
+        /// URL to reach the Verder Helpen core directly
         core_url: String,
         /// URL to allow user redirects to the widget
         widget_url: String,

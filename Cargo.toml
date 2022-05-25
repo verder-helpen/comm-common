@@ -1,6 +1,5 @@
 [package]
-name = "id-contact-comm-common"
-authors = ["Henk Dieter Oordt <hd@oordt.dev>"]
+name = "verder-helpen-comm-common"
 version = "0.1.0"
 edition = "2018"
 
@@ -13,16 +12,16 @@ session_db = ["platform_token"]
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-id-contact-jwt = { git = "https://github.com/id-contact/id-contact-jwt.git" }
-id-contact-proto = { git = "https://github.com/id-contact/id-contact-proto.git" }
+verder-helpen-jwt = { git = "https://github.com/verder-helpen/verder-helpen-jwt.git" }
+verder-helpen-proto = { git = "https://github.com/verder-helpen/verder-helpen-proto.git" }
 josekit = "0.8.0"
-rocket = { version = "0.5.0-rc.1", features = ["json"] }
+rocket = { version = "0.5.0-rc.2", features = ["json"] }
 rocket_oauth2 = "0.5.0-rc.1"
-rocket_sync_db_pools = { version = "0.1.0-rc.1", features = ["postgres_pool"] }
-serde = "1.0.136"
-serde_json = "1.0.79"
-serde_yaml = "0.8.23"
-thiserror = "1.0.30"
+rocket_sync_db_pools = { version = "0.1.0-rc.2", features = ["postgres_pool"] }
+serde = "1.0.137"
+serde_json = "1.0.81"
+serde_yaml = "0.8.24"
+thiserror = "1.0.31"
 reqwest = { version = "0.11.10", features = ["json"] }
 strum = "0.24.0"
 strum_macros = "0.24.0"

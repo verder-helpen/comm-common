@@ -228,10 +228,10 @@ session = {{ url = "{}" }}
             purpose: "test".to_owned(),
             id: id.unwrap_or_else(|| random_string(32)),
             domain: crate::types::SessionDomain::Guest,
-            redirect_url: "idcontact.nl".to_owned(),
-            name: "Test Id Contact".to_owned(),
+            redirect_url: "verderhelpen.nl".to_owned(),
+            name: "Test Verder Helpen".to_owned(),
             room_id: room_id.unwrap_or_else(|| random_string(32)),
-            instance: "icontact.nl".to_owned(),
+            instance: "verderhelpen.nl".to_owned(),
         };
 
         Session {

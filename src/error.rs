@@ -70,8 +70,8 @@ impl<'r, 'o: 'r> rocket::response::Responder<'r, 'o> for Error {
     }
 }
 
-impl From<id_contact_jwt::Error> for Error {
-    fn from(e: id_contact_jwt::Error) -> Self {
+impl From<verder_helpen_jwt::Error> for Error {
+    fn from(e: verder_helpen_jwt::Error) -> Self {
         Error::Jwe(JwtError::Jwe(e))
     }
 }

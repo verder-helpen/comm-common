@@ -23,7 +23,7 @@ insufficient_permission = "You do not have sufficient permissions to access this
 no_credentials_found = "There are no authenticated guests (yet)"
 
 [global.translations.nl]
-title = "ID Contact gegevens"
+title = "Verder Helpen gegevens"
 unknown_error = "Onbekende fout"
 loading = "Laden..."
 purpose = "Onderwerp"

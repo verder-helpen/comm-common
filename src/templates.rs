@@ -26,9 +26,9 @@ impl<'r> Responder<'r, 'static> for RenderedContent {
             render_type,
         } = self;
         if render_type == RenderType::Json {
-            return content::Json(content).respond_to(req);
+            return content::RawJson(content).respond_to(req);
         }
-        content::Html(content).respond_to(req)
+        content::RawHtml(content).respond_to(req)
     }
 }
 

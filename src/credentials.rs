@@ -20,7 +20,7 @@ pub fn collect_credentials(
     for guest_auth_result in guest_auth_results.iter() {
         if let Some(result) = &guest_auth_result.auth_result {
             if let Some(attributes) =
-                id_contact_jwt::dangerous_decrypt_auth_result_without_verifying_expiration(
+                verder_helpen_jwt::dangerous_decrypt_auth_result_without_verifying_expiration(
                     result,
                     config.verifier(),
                     config.decrypter(),
@@ -142,15 +142,15 @@ pub async fn get_credentials_for_host(
 mod tests {
     use super::*;
 
-    use id_contact_jwt::{sign_and_encrypt_auth_result, EncryptionKeyConfig, SignKeyConfig};
     use std::collections::HashMap;
     use std::convert::TryFrom;
+    use verder_helpen_jwt::{sign_and_encrypt_auth_result, EncryptionKeyConfig, SignKeyConfig};
 
-    use id_contact_proto::{AuthResult, AuthStatus};
     use josekit::{
         jwe::{JweDecrypter, JweEncrypter},
         jws::{alg::hmac::HmacJwsAlgorithm, JwsSigner, JwsVerifier},
     };
+    use verder_helpen_proto::{AuthResult, AuthStatus};
 
     use crate::config::AuthDuringCommConfig;
 
