@@ -53,6 +53,10 @@ pub fn sign_auth_select_params(
     sig_payload.set_claim("purpose", Some(serde_json::to_value(&params.purpose)?))?;
     sig_payload.set_claim("start_url", Some(serde_json::to_value(&params.start_url)?))?;
     sig_payload.set_claim(
+        "cancel_url",
+        Some(serde_json::to_value(&params.cancel_url)?),
+    )?;
+    sig_payload.set_claim(
         "display_name",
         Some(serde_json::to_value(&params.display_name)?),
     )?;
@@ -139,6 +143,7 @@ mod tests {
             AuthSelectParams {
                 purpose: "test".into(),
                 start_url: "https://example.com".into(),
+                cancel_url: "https://example.com/cancel".into(),
                 display_name: "bla".into(),
             },
             signer.as_ref(),
@@ -150,6 +155,10 @@ mod tests {
         assert_eq!(
             payload.claim("start_url").unwrap().as_str().unwrap(),
             "https://example.com"
+        );
+        assert_eq!(
+            payload.claim("cancel_url").unwrap().as_str().unwrap(),
+            "https://example.com/cancel"
         );
         assert_eq!(
             payload.claim("display_name").unwrap().as_str().unwrap(),
