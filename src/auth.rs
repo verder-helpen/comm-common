@@ -35,7 +35,7 @@ impl AuthProvider {
             AuthProvider::Google => AdHoc::on_ignite("Auth", |rocket| async {
                 rocket
                     .mount(
-                        "/",
+                        "/host",
                         rocket::routes![login_google, redirect_google, logout_generic,],
                     )
                     .attach(OAuth2::<Google>::fairing("google"))
@@ -43,7 +43,7 @@ impl AuthProvider {
             AuthProvider::Microsoft => AdHoc::on_ignite("Auth", |rocket| async {
                 rocket
                     .mount(
-                        "/",
+                        "/host",
                         rocket::routes![login_microsoft, redirect_microsoft, logout_generic,],
                     )
                     .attach(OAuth2::<Microsoft>::fairing("microsoft"))
