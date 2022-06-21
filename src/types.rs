@@ -16,6 +16,8 @@ pub struct AuthSelectParams {
     pub purpose: String,
     /// The start url to redirect the user to on authentication success
     pub start_url: String,
+    /// The url to redirect the user to on cancel of the login
+    pub cancel_url: String,
     /// The communication method's display name
     pub display_name: String,
 }
