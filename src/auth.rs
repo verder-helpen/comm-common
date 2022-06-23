@@ -243,7 +243,7 @@ pub fn render_login(
     render_type: RenderType,
     translations: Translations,
 ) -> Result<RenderedContent, Error> {
-    let login_url = format!("{}/auth/login", config.external_url());
+    let login_url = format!("{}/auth/login", config.external_host_url());
 
     if render_type == RenderType::Html {
         let mut context = Context::new();
@@ -266,7 +266,7 @@ pub fn render_unauthorized(
     render_type: RenderType,
     translations: Translations,
 ) -> Result<RenderedContent, Error> {
-    let logout_url = format!("{}/auth/logout", config.external_url());
+    let logout_url = format!("{}/auth/logout", config.external_host_url());
 
     if render_type == RenderType::Html {
         let mut context = Context::new();
@@ -289,7 +289,7 @@ pub fn render_not_found(
     render_type: RenderType,
     translations: Translations,
 ) -> Result<RenderedContent, Error> {
-    let logout_url = format!("{}/auth/logout", config.external_url());
+    let logout_url = format!("{}/auth/logout", config.external_host_url());
 
     if render_type == RenderType::Html {
         let mut context = Context::new();

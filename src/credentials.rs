@@ -235,7 +235,8 @@ mod tests {
 
         let config: Config = Config {
             internal_url: "https://example.com".to_string(),
-            external_url: None,
+            external_host_url: None,
+            external_guest_url: None,
             sentry_dsn: None,
             default_locale: String::from("nl"),
             translations: HashMap::new(),
