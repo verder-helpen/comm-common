@@ -16,8 +16,9 @@ pub type LanguageTranslations = HashMap<String, HashMap<String, String>>;
 pub struct RawConfig {
     /// Internal-facing URL
     internal_url: String,
-    /// External-facing URL. Defaults to Internal-facing if not set
-    external_url: Option<String>,
+    /// External-facing URLs. Defaults to Internal-facing if not set
+    external_guest_url: Option<String>,
+    external_host_url: Option<String>,
     /// Sentry DSN
     sentry_dsn: Option<String>,
     /// Default locale
@@ -43,7 +44,8 @@ pub struct RawConfig {
 #[serde(try_from = "RawConfig")]
 pub struct Config {
     pub internal_url: String,
-    pub external_url: Option<String>,
+    pub external_guest_url: Option<String>,
+    pub external_host_url: Option<String>,
     pub sentry_dsn: Option<String>,
     pub default_locale: String,
     pub translations: LanguageTranslations,
@@ -75,7 +77,8 @@ impl TryFrom<RawConfig> for Config {
             #[cfg(feature = "auth_during_comm")]
             auth_during_comm_config,
             internal_url: raw_config.internal_url,
-            external_url: raw_config.external_url,
+            external_guest_url: raw_config.external_guest_url,
+            external_host_url: raw_config.external_host_url,
             sentry_dsn: raw_config.sentry_dsn,
             default_locale: raw_config.default_locale,
             translations: raw_config.translations,
@@ -99,9 +102,16 @@ impl Config {
         &self.internal_url
     }
 
-    pub fn external_url(&self) -> &str {
-        match &self.external_url {
-            Some(external_url) => external_url,
+    pub fn external_guest_url(&self) -> &str {
+        match &self.external_guest_url {
+            Some(external_guest_url) => external_guest_url,
+            None => &self.internal_url,
+        }
+    }
+
+    pub fn external_host_url(&self) -> &str {
+        match &self.external_host_url {
+            Some(external_host_url) => external_host_url,
             None => &self.internal_url,
         }
     }
@@ -274,7 +284,8 @@ mod tests {
     const TEST_CONFIG_VALID: &str = r#"
 [global]
 internal_url = "https://internal.example.com"
-external_url = "https://external.example.com"
+external_guest_url = "https://external.example.com/guest"
+external_host_url = "https://external.example.com/host"
 default_locale = "en"
 
 core_url = "https://core.example.com"
@@ -345,7 +356,14 @@ MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEZLquEijJ7cP7K9qIHG7EvCTph53N
         let config: Config = config_from_str(TEST_CONFIG_VALID);
 
         assert_eq!(config.internal_url(), "https://internal.example.com");
-        assert_eq!(config.external_url(), "https://external.example.com");
+        assert_eq!(
+            config.external_guest_url(),
+            "https://external.example.com/guest"
+        );
+        assert_eq!(
+            config.external_host_url(),
+            "https://external.example.com/host"
+        );
 
         #[cfg(feature = "auth_during_comm")]
         {
