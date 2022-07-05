@@ -125,6 +125,9 @@ pub async fn get_credentials_for_host(
     db: &SessionDBConn,
 ) -> Result<Vec<Credentials>, Error> {
     let sessions = get_sessions_for_host(host_token, config, db).await?;
+    for session in &sessions {
+        session.mark_active(db).await?;
+    }
 
     let guest_auth_results = sessions
         .into_iter()
