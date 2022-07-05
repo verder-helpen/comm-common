@@ -76,6 +76,25 @@ impl Session {
         Ok(())
     }
 
+    /// Mark a session as active
+    pub async fn mark_active(&self, db: &SessionDBConn) -> Result<(), Error> {
+        let this = self.clone();
+        match db
+            .run(move |c| {
+                c.execute(
+                    "UPDATE session
+                SET last_activity = now()
+                WHERE session_id = $1",
+                    &[&this.guest_token.id],
+                )
+            })
+            .await
+        {
+            Ok(_) => Ok(()),
+            Err(e) => Err(e.into()),
+        }
+    }
+
     /// Register an authentication result with a session. Fails if the session
     /// already contains an authentication result.
     pub async fn register_auth_result(
