@@ -6,7 +6,7 @@ use rocket::{
 use std::path::Path;
 use tera::Tera;
 
-#[derive(PartialEq)]
+#[derive(PartialEq, Eq)]
 pub struct RenderedContent {
     pub content: String,
     pub render_type: RenderType,
@@ -32,7 +32,7 @@ impl<'r> Responder<'r, 'static> for RenderedContent {
     }
 }
 
-#[derive(PartialEq)]
+#[derive(PartialEq, Eq)]
 pub enum RenderType {
     Json,
     Html,
