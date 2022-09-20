@@ -95,6 +95,42 @@ impl Session {
         }
     }
 
+    /// Restart authentication for a guest token if it already exists.
+    /// if not, this function returns false.
+    pub async fn restart_auth(
+        token: GuestToken,
+        new_attr_id: String,
+        db: &SessionDBConn,
+    ) -> Result<bool, Error> {
+        let n = db
+            .run(move |c| {
+                c.execute(
+                    "UPDATE session SET attr_id=$1 WHERE
+                session_id = $2 AND
+                room_id = $3 AND
+                domain = $4 AND
+                redirect_url = $5 AND
+                purpose = $6 AND
+                name = $7 AND
+                instance = $8 AND
+                auth_result IS NULL",
+                    &[
+                        &new_attr_id,
+                        &token.id,
+                        &token.room_id,
+                        &token.domain.to_string(),
+                        &token.redirect_url,
+                        &token.purpose,
+                        &token.name,
+                        &token.instance,
+                    ],
+                )
+            })
+            .await?;
+
+        Ok(n == 1)
+    }
+
     /// Register an authentication result with a session. Fails if the session
     /// already contains an authentication result.
     pub async fn register_auth_result(
