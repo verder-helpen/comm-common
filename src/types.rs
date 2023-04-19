@@ -41,11 +41,13 @@ pub use platform_token::*;
 
 #[cfg(feature = "platform_token")]
 pub mod platform_token {
-    use crate::jwt::JwtError;
     use core::str;
+
     use josekit::{jws::JwsVerifier, jwt::JwtPayloadValidator};
     use serde::{de::DeserializeOwned, Deserialize, Serialize};
     use strum_macros::{Display, EnumString};
+
+    use crate::jwt::JwtError;
 
     #[derive(Deserialize, Debug, Serialize, Display, Clone, EnumString)]
     #[strum(serialize_all = "snake_case")]
