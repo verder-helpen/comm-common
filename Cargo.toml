@@ -14,24 +14,24 @@ session_db = ["platform_token"]
 [dependencies]
 verder-helpen-jwt = { git = "https://github.com/verder-helpen/verder-helpen-jwt.git" }
 verder-helpen-proto = { git = "https://github.com/verder-helpen/verder-helpen-proto.git" }
-josekit = "0.8.3"
-rocket = { version = "0.5.0-rc.3", features = ["json"] }
-rocket_oauth2 = "0.5.0-rc.2"
-rocket_sync_db_pools = { version = "0.1.0-rc.3", features = ["postgres_pool"] }
-serde = "1.0.163"
-serde_json = "1.0.96"
-serde_yaml = "0.9.21"
-thiserror = "1.0.40"
-reqwest = { version = "0.11.18", features = ["json"] }
+josekit = "0.8.4"
+rocket = { version = "0.5.0", features = ["json"] }
+rocket_oauth2 = "0.5.0"
+rocket_sync_db_pools = { version = "0.1.0", features = ["postgres_pool"] }
+serde = "1.0.193"
+serde_json = "1.0.108"
+serde_yaml = "0.9.27"
+thiserror = "1.0.50"
+reqwest = { version = "0.11.22", features = ["json"] }
 strum = "0.24.1"
 strum_macros = "0.24.3"
 rand = "0.8.5"
-tera = "1.19.0"
+tera = "1.19.1"
 lazy_static = "1.4.0"
-unic-langid = "0.9.1"
+unic-langid = "0.9.3"
 accept-language = "2.0.0"
 
 [dev-dependencies]
 serial_test = "0.9.0"
-tokio-test = "0.4.2"
-figment = { version = "0.10.10", features = ["env", "toml", "json"] }
+tokio-test = "0.4.3"
+figment = { version = "0.10.12", features = ["env", "toml", "json"] }
